@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cadastro</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    min-height: 100vh;
+    background: #0d0d0f;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Space Grotesk', sans-serif;
+    padding: 2rem 1rem;
+  }
+
+  .card {
+    width: 100%;
+    max-width: 460px;
+    background: #141418;
+    border: 1px solid #2a2a35;
+    border-radius: 20px;
+    padding: 2.5rem 2rem;
+  }
+
+  .header { margin-bottom: 2rem; }
+  .badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #7c6af7;
+    background: rgba(124,106,247,0.12);
+    border: 1px solid rgba(124,106,247,0.25);
+    border-radius: 20px;
+    padding: 4px 12px;
+    margin-bottom: 1rem;
+  }
+  h1 {
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: #f0eefc;
+    line-height: 1.2;
+  }
+  .subtitle { font-size: 13px; color: #5a5a72; margin-top: 6px; }
+
+  .form-group { margin-bottom: 1.25rem; }
+
+  label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #6e6e8a;
+    margin-bottom: 6px;
+  }
+
+  .input-wrap { position: relative; }
+
+  .input-wrap svg {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px; height: 16px;
+    stroke: #3d3d52;
+    fill: none;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: stroke 0.2s;
+    pointer-events: none;
+  }
+
+  input {
+    width: 100%;
+    height: 48px;
+    background: #0d0d0f;
+    border: 1px solid #2a2a35;
+    border-radius: 10px;
+    padding: 0 14px 0 44px;
+    font-family: inherit;
+    font-size: 14px;
+    color: #e8e8f0;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  input::placeholder { color: #3a3a50; }
+  input:focus { border-color: #7c6af7; box-shadow: 0 0 0 3px rgba(124,106,247,0.15); }
+  input:focus + .status-icon, input:focus ~ svg { stroke: #7c6af7; }
+
+  .status-icon {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px; height: 16px;
+    display: none;
+  }
+
+  .strength-bar { display: flex; gap: 4px; margin-top: 8px; }
+  .strength-bar span {
+    flex: 1; height: 3px; border-radius: 2px;
+    background: #2a2a35; transition: background 0.3s;
+  }
+  .strength-bar span.weak { background: #e24b4a; }
+  .strength-bar span.medium { background: #ef9f27; }
+  .strength-bar span.strong { background: #1d9e75; }
+
+  .error-msg {
+    font-size: 12px;
+    color: #e24b4a;
+    margin-top: 5px;
+    display: none;
+    align-items: center;
+    gap: 4px;
+  }
+  .error-msg::before {
+    content: '';
+    display: inline-block;
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: #e24b4a;
+    flex-shrink: 0;
+  }
+
+  input.error { border-color: #e24b4a !important; box-shadow: 0 0 0 3px rgba(226,75,74,0.12) !important; }
+  input.success { border-color: #1d9e75 !important; box-shadow: 0 0 0 3px rgba(29,158,117,0.12) !important; }
+
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+  .btn {
+    width: 100%;
+    height: 50px;
+    background: #7c6af7;
+    border: none;
+    border-radius: 12px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+    margin-top: 0.5rem;
+    letter-spacing: 0.04em;
+    transition: background 0.2s, transform 0.15s;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn:hover { background: #9180f9; }
+  .btn:active { transform: scale(0.98); }
+  .btn:disabled { background: #2a2a35; color: #4a4a60; cursor: not-allowed; transform: none; }
+
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 1.5rem 0;
+    color: #3a3a50;
+    font-size: 12px;
+  }
+  .divider::before, .divider::after {
+    content: ''; flex: 1;
+    height: 1px; background: #2a2a35;
+  }
+
+  .login-link {
+    text-align: center;
+    font-size: 13px;
+    color: #5a5a72;
+  }
+  .login-link a { color: #7c6af7; text-decoration: none; font-weight: 500; }
+  .login-link a:hover { color: #9180f9; }
+
+  .toast {
+    position: fixed;
+    bottom: 2rem; left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: #1d9e75;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 12px 20px;
+    border-radius: 12px;
+    opacity: 0;
+    transition: opacity 0.3s, transform 0.3s;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  @media (max-width: 480px) {
+    .row { grid-template-columns: 1fr; }
+    .card { padding: 2rem 1.25rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="header">
+    <span class="badge">✦ Novo cadastro</span>
+    <h1>Crie sua conta</h1>
+    <p class="subtitle">Preencha os dados abaixo para continuar</p>
+  </div>
+
+  <form id="form" novalidate>
+
+    <div class="row">
+      <div class="form-group">
+        <label for="nome">Nome</label>
+        <div class="input-wrap">
+          <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <input type="text" id="nome" placeholder="João" autocomplete="given-name">
+        </div>
+        <div class="error-msg" id="nome-err">Nome obrigatório</div>
+      </div>
+
+      <div class="form-group">
+        <label for="sobrenome">Sobrenome</label>
+        <div class="input-wrap">
+          <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <input type="text" id="sobrenome" placeholder="Silva" autocomplete="family-name">
+        </div>
+        <div class="error-msg" id="sobrenome-err">Sobrenome obrigatório</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="email">E-mail</label>
+      <div class="input-wrap">
+        <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+        <input type="email" id="email" placeholder="joao@email.com" autocomplete="email">
+      </div>
+      <div class="error-msg" id="email-err">E-mail inválido</div>
+    </div>
+
+    <div class="form-group">
+      <label for="telefone">Telefone</label>
+      <div class="input-wrap">
+        <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.84 12 19.79 19.79 0 0 1 1.77 3.39 2 2 0 0 1 3.74 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.6a16 16 0 0 0 6.07 6.07l1.01-1.01a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 15.92z"/></svg>
+        <input type="tel" id="telefone" placeholder="(11) 99999-9999" autocomplete="tel" maxlength="15">
+      </div>
+      <div class="error-msg" id="telefone-err">Telefone inválido</div>
+    </div>
+
+    <div class="form-group">
+      <label for="senha">Senha</label>
+      <div class="input-wrap">
+        <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <input type="password" id="senha" placeholder="Mínimo 8 caracteres" autocomplete="new-password">
+      </div>
+      <div class="strength-bar" id="strength-bar">
+        <span id="s1"></span><span id="s2"></span><span id="s3"></span><span id="s4"></span>
+      </div>
+      <div class="error-msg" id="senha-err">Senha fraca: use letras, números e símbolos</div>
+    </div>
+
+    <div class="form-group">
+      <label for="confirmar">Confirmar senha</label>
+      <div class="input-wrap">
+        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <input type="password" id="confirmar" placeholder="Repita a senha" autocomplete="new-password">
+      </div>
+      <div class="error-msg" id="confirmar-err">As senhas não coincidem</div>
+    </div>
+
+    <button type="submit" class="btn" id="btn-submit">Criar conta</button>
+  </form>
+
+  <div class="divider">ou</div>
+  <p class="login-link">Já tem uma conta? <a href="#">Fazer login</a></p>
+</div>
+
+<div class="toast" id="toast">✓ Cadastro realizado com sucesso!</div>
+
+<script>
+  const form = document.getElementById('form');
+
+  const fields = {
+    nome: { el: document.getElementById('nome'), err: document.getElementById('nome-err') },
+    sobrenome: { el: document.getElementById('sobrenome'), err: document.getElementById('sobrenome-err') },
+    email: { el: document.getElementById('email'), err: document.getElementById('email-err') },
+    telefone: { el: document.getElementById('telefone'), err: document.getElementById('telefone-err') },
+    senha: { el: document.getElementById('senha'), err: document.getElementById('senha-err') },
+    confirmar: { el: document.getElementById('confirmar'), err: document.getElementById('confirmar-err') }
+  };
+
+  function showError(key, msg) {
+    fields[key].el.classList.add('error');
+    fields[key].el.classList.remove('success');
+    fields[key].err.textContent = (fields[key].err.dataset.default || '') + (msg || '');
+    fields[key].err.style.display = 'flex';
+  }
+  function showSuccess(key) {
+    fields[key].el.classList.remove('error');
+    fields[key].el.classList.add('success');
+    fields[key].err.style.display = 'none';
+  }
+  function clearState(key) {
+    fields[key].el.classList.remove('error','success');
+    fields[key].err.style.display = 'none';
+  }
+
+  function validateNome(v) { return v.trim().length >= 2; }
+  function validateEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()); }
+  function validateTelefone(v) { return /^\(\d{2}\)\s?\d{4,5}-\d{4}$/.test(v.trim()); }
+  function validateSenha(v) { return v.length >= 8 && /[A-Za-z]/.test(v) && /\d/.test(v); }
+
+  function senhaStrength(v) {
+    let score = 0;
+    if (v.length >= 8) score++;
+    if (/[A-Z]/.test(v)) score++;
+    if (/\d/.test(v)) score++;
+    if (/[^A-Za-z0-9]/.test(v)) score++;
+    return score;
+  }
+
+  function updateStrength(v) {
+    const score = senhaStrength(v);
+    const classes = ['', 'weak', 'weak', 'medium', 'strong'];
+    for (let i = 1; i <= 4; i++) {
+      const bar = document.getElementById('s' + i);
+      bar.className = i <= score ? classes[score] : '';
+    }
+  }
+
+  fields.telefone.el.addEventListener('input', function () {
+    let v = this.value.replace(/\D/g, '').slice(0, 11);
+    if (v.length > 2) v = '(' + v.slice(0,2) + ') ' + v.slice(2);
+    if (v.length > 10) v = v.slice(0,10) + '-' + v.slice(10);
+    this.value = v;
+  });
+
+  fields.senha.el.addEventListener('input', function () {
+    updateStrength(this.value);
+    if (this.value) validateSenha(this.value) ? showSuccess('senha') : clearState('senha');
+    else clearState('senha');
+  });
+
+  Object.keys(fields).forEach(key => {
+    fields[key].el.addEventListener('blur', function () { validateField(key); });
+  });
+
+  function validateField(key) {
+    const v = fields[key].el.value;
+    if (key === 'nome' || key === 'sobrenome') {
+      if (!v.trim()) { showError(key, key === 'nome' ? 'Nome obrigatório' : 'Sobrenome obrigatório'); return false; }
+      if (!validateNome(v)) { showError(key, 'Mínimo 2 caracteres'); return false; }
+      showSuccess(key); return true;
+    }
+    if (key === 'email') {
+      if (!v.trim()) { showError(key, 'E-mail obrigatório'); return false; }
+      if (!validateEmail(v)) { showError(key, 'E-mail inválido'); return false; }
+      showSuccess(key); return true;
+    }
+    if (key === 'telefone') {
+      if (!v.trim()) { showError(key, 'Telefone obrigatório'); return false; }
+      if (!validateTelefone(v)) { showError(key, 'Formato: (11) 99999-9999'); return false; }
+      showSuccess(key); return true;
+    }
+    if (key === 'senha') {
+      if (!v) { showError(key, 'Senha obrigatória'); return false; }
+      if (!validateSenha(v)) { showError(key, 'Use letras, números e mínimo 8 caracteres'); return false; }
+      showSuccess(key); return true;
+    }
+    if (key === 'confirmar') {
+      if (!v) { showError(key, 'Confirme sua senha'); return false; }
+      if (v !== fields.senha.el.value) { showError(key, 'As senhas não coincidem'); return false; }
+      showSuccess(key); return true;
+    }
+  }
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    const keys = ['nome','sobrenome','email','telefone','senha','confirmar'];
+    const valid = keys.map(k => validateField(k)).every(Boolean);
+    if (!valid) return;
+
+    const btn = document.getElementById('btn-submit');
+    btn.disabled = true;
+    btn.textContent = 'Criando conta...';
+
+    setTimeout(() => {
+      const toast = document.getElementById('toast');
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3000);
+      btn.textContent = 'Criar conta';
+      btn.disabled = false;
+      form.reset();
+      keys.forEach(k => clearState(k));
+      for (let i = 1; i <= 4; i++) document.getElementById('s'+i).className = '';
+    }, 1200);
+  });
+</script>
+
+</body>
+</html>
